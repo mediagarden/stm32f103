@@ -86,14 +86,11 @@ int main(void) {
 	MX_GPIO_Init();
 	/* USER CODE BEGIN 2 */
 	//add by lfs
-	GPIO_Initure.Pin = GPIO_PIN_5; 				//PB5 LED0
+	GPIO_Initure.Pin = GPIO_PIN_8; 				//PB8 BEEP
 	GPIO_Initure.Mode = GPIO_MODE_OUTPUT_PP;  	//推挽输出
 	GPIO_Initure.Pull = GPIO_PULLUP;          	//上拉
 	GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;  //高速
 	HAL_GPIO_Init(GPIOB, &GPIO_Initure);
-
-	GPIO_Initure.Pin = GPIO_PIN_5; 				//PE5 LED1
-	HAL_GPIO_Init(GPIOE, &GPIO_Initure);
 
 	/* USER CODE END 2 */
 
@@ -102,11 +99,9 @@ int main(void) {
 	while (1) {
 		/* USER CODE END WHILE */
 		//add by lfs
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);		//PB5置1 LED0
-		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_SET);		//PE5置1 LED1
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);		//PB8置1 BEEP(OFF)
 		HAL_Delay(500);		//
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);	//PB5置0 LED0
-		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_RESET);	//PE5置0 LED1
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);	//PB8置0 BEEP(ON)
 		HAL_Delay(500);
 		/* USER CODE BEGIN 3 */
 	}
