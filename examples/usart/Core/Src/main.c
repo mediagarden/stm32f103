@@ -26,6 +26,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+//@ref:https://github.com/mpredfearn/simple-printf
 int putchar(int c);
 static void simple_outputchar(char **str, char c)
 {
