@@ -23,6 +23,7 @@
 #include "usart.h"
 #include "led.h"
 #include "key.h"
+#include "lcd.h"
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
@@ -33,7 +34,6 @@
 
 
 /* Private function prototypes -----------------------------------------------*/
-//static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 
@@ -44,14 +44,14 @@
 int main(void)
 {
   /* MCU Configuration--------------------------------------------------------*/
-  uint8_t key_code = 0;
+  u8 x = 0;
+  u8 lcd_id[12];
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* Configure the system clock */
   SystemClock_Config();
 
-  //MX_GPIO_Init();
   led_init();
   key_init();
   delay_init(72);//初始化延时函数(72mHz)
@@ -59,42 +59,37 @@ int main(void)
   /* Initialize all configured peripherals */
 
   /* Infinite loop */
-  while (1)
-  {
-	key_code = key_scan(0);
-	if(key_code == KEY0_PRES)
+	LCD_Init();           				//初始化LCD FSMC接口
+	POINT_COLOR=RED;     				//画笔颜色：红色
+	while(1)
 	{
-		simple_printf("KEY0_PRES\n");
+		switch(x)
+		{
+			case 0:LCD_Clear(WHITE);break;
+			case 1:LCD_Clear(BLACK);break;
+			case 2:LCD_Clear(BLUE);break;
+			case 3:LCD_Clear(RED);break;
+			case 4:LCD_Clear(MAGENTA);break;
+			case 5:LCD_Clear(GREEN);break;
+			case 6:LCD_Clear(CYAN);break;
+			case 7:LCD_Clear(YELLOW);break;
+			case 8:LCD_Clear(BRRED);break;
+			case 9:LCD_Clear(GRAY);break;
+			case 10:LCD_Clear(LGRAY);break;
+			case 11:LCD_Clear(BROWN);break;
+		}
+		POINT_COLOR=RED;
+		LCD_ShowString(30,40,210,24,24,"WarShip STM32 ^_^");
+		LCD_ShowString(30,70,200,16,16,"TFTLCD TEST");
+		LCD_ShowString(30,90,200,16,16,"ATOM@ALIENTEK");
+		LCD_ShowString(30,110,200,16,16,lcd_id);		//显示LCD ID
+		LCD_ShowString(30,130,200,12,12,"2017/5/27");
+		x++;
+		if(x==12)x=0;
+		LED0=!LED0;
+		delay_ms(1000);
 	}
-	else if(key_code == KEY1_PRES)
-	{
-		simple_printf("KEY1_PRES\n");
-	}
-	else if(key_code == KEY2_PRES)
-	{
-		simple_printf("KEY2_PRES\n");
-	}
-	else if(key_code == WKUP_PRES)
-	{
-		simple_printf("WKUP_PRES\n");
-	}
-    delay_ms(100);
-  }
 }
-
-
-///**
-//  * @brief GPIO Initialization Function
-//  * @param None
-//  * @retval None
-//  */
-//static void MX_GPIO_Init(void)
-//{
-//  /* GPIO Ports Clock Enable */
-//  __HAL_RCC_GPIOC_CLK_ENABLE();
-//  __HAL_RCC_GPIOA_CLK_ENABLE();
-//  __HAL_RCC_GPIOB_CLK_ENABLE();
-//}
 
 /**
   * @brief  This function is executed in case of error occurrence.
