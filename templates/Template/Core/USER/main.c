@@ -21,7 +21,8 @@
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
-
+#include "led.h"
+#include "key.h"
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
@@ -32,7 +33,7 @@
 
 
 /* Private function prototypes -----------------------------------------------*/
-static void MX_GPIO_Init(void);
+//static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 
@@ -43,47 +44,57 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* MCU Configuration--------------------------------------------------------*/
-
+  uint8_t key_code = 0;
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* Configure the system clock */
   SystemClock_Config();
 
-  MX_GPIO_Init();
-
+  //MX_GPIO_Init();
+  led_init();
+  key_init();
   delay_init(72);//初始化延时函数(72mHz)
   uart_init(9600);//初始化调试串口
-  uart_begin_async_recv();
   /* Initialize all configured peripherals */
 
   /* Infinite loop */
   while (1)
   {
-	  simple_printf("ping\n");
-	  if(uart_finish_packet())
-	  {
-		  simple_printf("recv:%s\n",huart1_rx_buffer);
-		  uart_end_async_recv();
-		  uart_begin_async_recv();
-	  }
-    delay_ms(4000);
+	key_code = key_scan(0);
+	if(key_code == KEY0_PRES)
+	{
+		simple_printf("KEY0_PRES\n");
+	}
+	else if(key_code == KEY1_PRES)
+	{
+		simple_printf("KEY1_PRES\n");
+	}
+	else if(key_code == KEY2_PRES)
+	{
+		simple_printf("KEY2_PRES\n");
+	}
+	else if(key_code == WKUP_PRES)
+	{
+		simple_printf("WKUP_PRES\n");
+	}
+    delay_ms(100);
   }
 }
 
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-}
+///**
+//  * @brief GPIO Initialization Function
+//  * @param None
+//  * @retval None
+//  */
+//static void MX_GPIO_Init(void)
+//{
+//  /* GPIO Ports Clock Enable */
+//  __HAL_RCC_GPIOC_CLK_ENABLE();
+//  __HAL_RCC_GPIOA_CLK_ENABLE();
+//  __HAL_RCC_GPIOB_CLK_ENABLE();
+//}
 
 /**
   * @brief  This function is executed in case of error occurrence.

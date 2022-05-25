@@ -5,10 +5,11 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-
+#ifdef UART_RX_ENABLE
 uint8_t huart1_rx_buffer[RX_BUFFER_SIZE];
 uint16_t huart1_rx_len = 0;
 uint8_t huart1_rx_data = 0x00;
+#endif
 
 UART_HandleTypeDef huart1;
 
@@ -28,7 +29,7 @@ void uart_init(uint32_t baudRate)
 	  }
 }
 
-
+#ifdef UART_RX_ENABLE
 void uart_begin_async_recv()
 {
 	memset(huart1_rx_buffer, 0x00, sizeof(RX_BUFFER_SIZE));
@@ -55,12 +56,14 @@ int uart_finish_packet()
 	}
 	return 0;
 }
+#endif
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   /* NOTE: This function Should not be modified, when the callback is needed,
            the HAL_UART_TxCpltCallback could be implemented in the user file
    */
+#ifdef UART_RX_ENABLE
 	if(huart->Instance == huart1.Instance)
 	{
 		if(huart1_rx_len + 1 == RX_BUFFER_SIZE)
@@ -72,6 +75,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		huart1_rx_buffer[huart1_rx_len++] = huart1_rx_data;
 		HAL_UART_Receive_IT(&huart1, (uint8_t *)&huart1_rx_data, 1);
 	}
+#endif
+
 }
 
 int putchar(int c)
