@@ -1,8 +1,14 @@
 ﻿#include "sys.h"
 #include "usart.h"
 #include "main.h"
+#include <stdio.h>
 #include <stddef.h>
 #include <stdarg.h>
+
+
+uint8_t huart1_rx_buffer[RX_BUFFER_SIZE];
+uint16_t huart1_rx_len = 0;
+uint8_t huart1_rx_data = 0x00;
 
 UART_HandleTypeDef huart1;
 
@@ -22,36 +28,55 @@ void uart_init(uint32_t baudRate)
 	  }
 }
 
-//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-//{
-//  /* Prevent unused argument(s) compilation warning */
-//  UNUSED(huart);
-//  /* NOTE: This function Should not be modified, when the callback is needed,
-//           the HAL_UART_TxCpltCallback could be implemented in the user file
-//   */
-//	if(Uart1_Rx_Cnt >= 255)  //溢出判断
-//	{
-//		Uart1_Rx_Cnt = 0;
-//		memset(RxBuffer,0x00,sizeof(RxBuffer));
-//		HAL_UART_Transmit(&huart1, (uint8_t *)"数据溢出", 10,0xFFFF);
-//	}
-//	else
-//	{
-//		RxBuffer[Uart1_Rx_Cnt++] = aRxBuffer;   //接收数据转存
-//		if((RxBuffer[Uart1_Rx_Cnt-1] == 0x0A)&&(RxBuffer[Uart1_Rx_Cnt-2] == 0x0D)) //判断结束位
-//		{
-//			HAL_UART_Transmit(&huart1, (uint8_t *)&RxBuffer, Uart1_Rx_Cnt,0xFFFF); //将收到的信息发送出去
-//            while(HAL_UART_GetState(&huart1) == HAL_UART_STATE_BUSY_TX);//检测UART发送结束
-//			Uart1_Rx_Cnt = 0;
-//			memset(RxBuffer,0x00,sizeof(RxBuffer)); //清空数组
-//		}
-//	}
-//	HAL_UART_Receive_IT(&huart1, (uint8_t *)&aRxBuffer, 1);   //再开启接收中断
-//}
+
+void uart_begin_async_recv()
+{
+	memset(huart1_rx_buffer, 0x00, sizeof(RX_BUFFER_SIZE));
+	huart1_rx_len = 0;
+	HAL_UART_Receive_IT(&huart1, (uint8_t *)&huart1_rx_data, 1);
+}
+
+void uart_end_async_recv()
+{
+	HAL_UART_AbortReceive_IT(&huart1);
+}
+
+int uart_finish_packet()
+{
+	if(huart1_rx_len < 2)
+	{
+		return 0;
+	}
+
+	if(huart1_rx_buffer[huart1_rx_len-2]==0x0D &&
+	   huart1_rx_buffer[huart1_rx_len-1]==0x0A)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the HAL_UART_TxCpltCallback could be implemented in the user file
+   */
+	if(huart->Instance == huart1.Instance)
+	{
+		if(huart1_rx_len + 1 == RX_BUFFER_SIZE)
+		{
+			memset(huart1_rx_buffer, 0x00, sizeof(RX_BUFFER_SIZE));
+			huart1_rx_len = 0;
+		}
+
+		huart1_rx_buffer[huart1_rx_len++] = huart1_rx_data;
+		HAL_UART_Receive_IT(&huart1, (uint8_t *)&huart1_rx_data, 1);
+	}
+}
 
 int putchar(int c)
 {
-	HAL_UART_Transmit(&huart1, &c, 1, 0xFFFF);
+	HAL_UART_Transmit(&huart1, (uint8_t*)&c, 1, 0xFFFF);
 	return c;
 }
 

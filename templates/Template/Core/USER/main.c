@@ -54,14 +54,20 @@ int main(void)
 
   delay_init(72);//初始化延时函数(72mHz)
   uart_init(9600);//初始化调试串口
-
+  uart_begin_async_recv();
   /* Initialize all configured peripherals */
 
   /* Infinite loop */
   while (1)
   {
+	  simple_printf("ping\n");
+	  if(uart_finish_packet())
+	  {
+		  simple_printf("recv:%s\n",huart1_rx_buffer);
+		  uart_end_async_recv();
+		  uart_begin_async_recv();
+	  }
     delay_ms(4000);
-    simple_printf("hello world.\n");
   }
 }
 
