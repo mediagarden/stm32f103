@@ -40,7 +40,7 @@ extern "C"
   /* Exported functions prototypes ---------------------------------------------*/
   void Error_Handler(void);
 
-
+  void LVGL_IncTick(void);
   /* Private defines -----------------------------------------------------------*/
 
 #ifdef __cplusplus

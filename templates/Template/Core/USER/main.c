@@ -25,7 +25,6 @@
 #include "lcd.h"
 #include "usart.h"	 
 #include "touch.h"
-#include "timer.h"
 #include "lvgl.h"
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
@@ -55,7 +54,6 @@ int main(void)
 	uart_init(115200);					//初始化串口
 	LED_Init();							//初始化LED	
 	KEY_Init();							//初始化按键
-//	TIM3_Int_Init(999,71);				//定时器初始化(1ms中断),用于给lvgl提供1ms的心跳节拍
 	LCD_Init();							//LCD初始化			
  	tp_dev.init();					    //触摸屏初始化
 	
@@ -73,10 +71,13 @@ int main(void)
 	{
 		tp_dev.scan(0);
 		lv_task_handler();
-		lv_tick_inc(1);
 	}
 }
 
+void LVGL_IncTick(void)
+{
+	lv_tick_inc(1);
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
