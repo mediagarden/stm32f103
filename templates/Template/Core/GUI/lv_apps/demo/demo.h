@@ -1,10 +1,10 @@
 /**
- * @file benchmark.h
+ * @file demo.h
  *
  */
 
-#ifndef BENCHMARK_H
-#define BENCHMARK_H
+#ifndef DEMO_H
+#define DEMO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,12 +18,11 @@ extern "C" {
 #include "lvgl.h"
 #include "lv_ex_conf.h"
 #else
-#include "../../../lvgl/lvgl.h"
-#include "../../../lv_ex_conf.h"
+#include "lvgl.h"
+#include "lv_ex_conf.h"
 #endif
 
-#if LV_USE_BENCHMARK
-
+#if LV_USE_DEMO
 
 /*********************
  *      DEFINES
@@ -38,24 +37,18 @@ extern "C" {
  **********************/
 
 /**
- * Open a graphics benchmark
+ * Create a demo application
  */
-void benchmark_create(void);
-
-void benchmark_start(void);
-
-bool benchmark_is_ready(void);
-
-uint32_t benchmark_get_refr_time(void);
+void demo_create(void);
 
 /**********************
  *      MACROS
  **********************/
 
-#endif /*LV_USE_BENCHMARK*/
+#endif /*LV_USE_DEMO*/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* BENCHMARK_H */
+#endif /*DEMO_H*/

@@ -23,14 +23,13 @@
 #include "key.h"
 #include "sys.h"
 #include "lcd.h"
+#include "sram.h"
 #include "usart.h"	 
 #include "touch.h"
 #include "lvgl.h"
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
-#include "lv_apps\demo\demo.h" 
-#include "lv_tests\lv_test_theme\lv_test_theme_1.h" 
-#include "lv_tests\lv_test_theme\lv_test_theme_2.h"
+#include "lv_apps\demo\demo.h"
 /************************************************
  ALIENTEK 战舰STM32F103开发板 实验27
  触摸屏实验-HAL库函数版
@@ -51,22 +50,20 @@ int main(void)
     /* Configure the system clock */
     SystemClock_Config();
 	delay_init(72);               		//初始化延时函数
-	uart_init(115200);					//初始化串口
+	uart_init(9600);					//初始化串口
 	LED_Init();							//初始化LED	
 	KEY_Init();							//初始化按键
-	LCD_Init();							//LCD初始化			
+	LCD_Init();							//LCD初始化
+	SRAM_Init();						//初始化外部SRAM  			
  	tp_dev.init();					    //触摸屏初始化
 	
 	lv_init();							//lvgl系统初始化
 	lv_port_disp_init();		        //lvgl显示接口初始化
 	lv_port_indev_init();		        //lvgl输入接口初始化
 	
-	//demo_create();					//开始运行demo
-	//lv_test_theme_1(lv_theme_night_init(210, NULL));
-	lv_test_theme_2();
+
 	
-	
-	
+	demo_create();
 	while(1)
 	{
 		tp_dev.scan(0);

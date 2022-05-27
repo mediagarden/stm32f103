@@ -45,6 +45,7 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 MEMORY
 {
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 64K
+  SRAM    (xrw)   : ORIGIN = 0x68000000,   LENGTH = 1024K
   FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 512K
 }
 
@@ -162,6 +163,15 @@ SECTIONS
     __bss_end__ = _ebss;
   } >RAM
 
+  /* Uninitialized data section into "RAM" Ram type memory */
+  . = ALIGN(4);
+  .SRAM_LCD :
+  {
+   . = ALIGN(4);
+   *(.SRAM_LCD)
+   . = ALIGN(4);
+  } >SRAM
+  
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
   ._user_heap_stack :
   {
